@@ -1,1 +1,85 @@
 
+/**
+Mini stopwatch en CSharp 
+Author : noms
+*/
+
+using System;
+using System.Threading;
+
+
+namespace Main
+{
+    class Stopwatch
+    {
+        bool hasStarted = false;
+        public DateTime StartTime { get; set; }
+        public DateTime FinishTime { get; set; }
+
+        private TimeSpan _elapsed;
+        public TimeSpan Elapsed 
+        {
+            get
+            {
+                var elapsed = FinishTime - StartTime;
+
+                _elapsed = elapsed;
+
+                this.StartTime = new DateTime();
+                this.FinishTime = new DateTime();
+
+                return this._elapsed;
+            }
+        }
+
+        public DateTime Start() 
+        {
+            if(hasStarted)
+            {
+                throw new InvalidOperationException("StopWatch a déjà ete lancé.");   
+            }
+
+            hasStarted = true;
+            
+            this.StartTime = DateTime.Now;
+            return this.StartTime;
+        }
+        
+        public DateTime Stop()
+        {
+            if(StartTime.ToShortDateString() == "01/01/0001")
+            {
+                throw new InvalidOperationException("Vous ne pouver pas arreter un stopwatch si vous ne l'aver pas lancer en premier");   
+            }
+
+            hasStarted = false;
+            this.FinishTime = DateTime.Now;
+            return this.FinishTime;
+        }
+    }
+    
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            setTimerTo(30);
+
+        }
+        
+        static void setTimerTo(int seconds)
+        {
+            var stopwatch = new Stopwatch();
+            
+            stopwatch.Start();
+            System.Console.WriteLine("=> Le StopWatch est ON.");
+            
+            System.Console.WriteLine("\nDort pour {0} secondes...", seconds);
+            Thread.Sleep(seconds*1000);
+
+            stopwatch.Stop();
+            System.Console.WriteLine("\n=> Le StopWatch est OFF.");
+            
+            System.Console.WriteLine("\nTemps écoulé: " + stopwatch.Elapsed);
+        }
+    }
+}
